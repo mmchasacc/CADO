@@ -5,13 +5,13 @@ const TodoPage = () => {
   return (
     <>
       <div className="flex flex-col gap-9 p-4 w-[300px] bg-gray-800 rounded-xl">
-        <input
-          className="text-center bg-gray-200 text-gray-800 rounded-xs p-2"
-          type="text"
-          placeholder="What do you want to add?"
+        <h1 className="font-extrabold">ADD TASK</h1>
+        <textarea
+          className="text-left bg-gray-200 text-gray-800 rounded-xs p-2"
+          placeholder='I need to buy "eggs" '
         />
 
-        <label>Category:</label>
+        <label className="text-left mb-[-30px]">Category:</label>
         <div className="w-max">
           <select className="w-[218px] text-black bg-gray-200 rounded-sm p-2">
             <option value="shopping" className="text-black">
@@ -35,7 +35,20 @@ const TodoPage = () => {
         <CalendarComponent />
 
         </div>
-        {/* <input type="date" value="2025-12-12" min="" /> */}
+        <div>
+            <select id="prioritySelection" className="bg-black rounded-sm p-2 w-35">
+                <option value="Urgent" className="text-red-400" >
+                    Urgent
+                </option>
+                <option value="Serious" className="text-yellow-300" >
+                    Serious
+                </option>
+                <option value="getInDone" className="text-green-400" >
+                    Get it done
+                </option>
+            </select>
+            <button className="bg-green-600 p-1.5 w-30 rounded-sm">Confirm</button>
+        </div>
       </div>
     </>
   );

@@ -1,5 +1,4 @@
 import './App.css'
-import "./CalendarStyle.css"
 import LoginPage from './pages/LogInPage'
 import SignUpPage from './pages/SignupPage'
 import TodoPage from './pages/TodoPage'
