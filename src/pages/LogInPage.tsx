@@ -34,7 +34,7 @@ const LoginPage = () => {
 
   return (
     <>
-      <div>
+      <div className="flex flex-col items-center ">
         <form onSubmit={handleLogin} className="flex flex-col gap-8">
           <h1>Log in</h1>
           <input
@@ -51,7 +51,7 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit" className="bg-amber-300 hover:bg-amber-600 active:bg-amber-100 text-black">Log in</button>
+          <button type="submit" className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-s font-medium text-black">Log in</button>
           <button type="submit" onClick={handleOnClick}>Sign up</button>
 
         </form>

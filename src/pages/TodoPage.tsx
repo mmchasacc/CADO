@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import CalendarComponent from "../components/Calendar";
+import { useNavigate } from "react-router-dom";
 
 type Status = "Urgent" | "Serious" | "Get it done";
 type View = "today" | "upcoming" | "all";
@@ -41,6 +42,15 @@ const TodoPage = () => {
   const [tCategory, setTCategory] = useState("Personal");
   const [tDate, setTDate] = useState<Date>(new Date());
   const [newCat, setNewCat] = useState("");
+
+  const navigate = useNavigate()
+
+  const handleLogout = () => {
+    localStorage.removeItem("token")
+
+    navigate("/login")
+  }
+
 
   const todayKey = new Date().toDateString();
   const todayEnd = useMemo(() => {
@@ -102,7 +112,9 @@ const TodoPage = () => {
         : "bg-emerald-500/15 text-emerald-200 border-emerald-400/20";
 
   return (
+    
     <div className=" overflow-hidden bg-[#0B0F1A] text-white">
+      <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-indigo-200 hover:bg-indigo-300 active:bg-indigo-400 text-xs font-bold text-gray-600">LOGOUT</button>
       <div className="h-full w-full flex overflow-hidden">
         {/* sidebar desktop */}
         <aside className="hidden md:flex w-60 shrink-0 flex-col bg-[#0E1324] border-r border-white/10 p-4">
@@ -278,7 +290,7 @@ const TodoPage = () => {
                           ))}
                         </select>
                       </div>
-
+                      
                       <div className="rounded-xl border border-white/10 bg-white/5 p-3">
                         <p className="text-xs text-white/45 mb-2">Category</p>
                         <select
@@ -331,7 +343,7 @@ const TodoPage = () => {
             onMouseDown={() => setCreateOpen(false)}
           >
             <div className="w-full flex justify-center" onMouseDown={(e) => e.stopPropagation()}>
-              <div className="w-full md:w-[520px] max-h-[90vh] overflow-y-auto overscroll-contain bg-[#0E1324] border border-white/10 rounded-t-2xl md:rounded-2xl p-4">
+              <div className="w-full mb-60 md:w-130 max-h-[90vh] max-w-250 overflow-y-auto overscroll-contain bg-[#0E1324] border border-white/10 rounded-t-2xl md:rounded-2xl p-4">
                 <div className="flex items-center justify-between mb-3">
                   <p className="text-sm font-semibold">New task</p>
                   <button onClick={() => setCreateOpen(false)} className="text-xs text-white/50 hover:text-white/80">

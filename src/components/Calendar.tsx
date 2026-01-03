@@ -25,7 +25,7 @@ const CalendarComponent = () => {
         </button>
 
         {showCalendar && (
-          <div className="absolute z-50 top-full left-0 mt-2 w-full p-2 bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl animate-fade-in-down">
+          <div className="absolute z-50 top-[-20rem] left-0  mt-2 w-full p-2 bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl animate-fade-in-down">
             <Calendar
               className="w-full bg-transparent border-none font-outfit text-white"
               tileClassName="rounded-lg hover:bg-purple-600/30 transition-colors text-white"
