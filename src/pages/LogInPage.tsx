@@ -1,47 +1,61 @@
-import { useContext, useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const LoginPage = () => {
-  const { login } = useAuth()
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
 
   const navigate = useNavigate()
 
-  const handleLogin = () => {
-    const savedData = localStorage.getItem("user_pass")
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault()
 
-    const user = JSON.parse(savedData)
+    try {
+      const response = await axios.post("http://localhost:5000/api/login", {
+        email,
+        password
+      })
 
-    if (user.email === email && user.password === password) {
+      const { token } = response.data
+      localStorage.setItem("token", token)
+
       navigate("/todo")
-    } else {
-      alert("Wrong email or password")
+    } catch (error) {
+      console.error("Login failed", error)
+      alert("Invalid email or password")
     }
   }
-  
+
+
+  const handleOnClick = () => {
+    navigate("/signup")
+  }
+
   return (
     <>
-      <div className="flex flex-col gap-8">
-        <h1>Log in</h1>
-        <input
-          className=" bg-black rounded-[5px] p-2"
-          type="email"
-          placeholder="Enter Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          className=" bg-black rounded-[5px] p-2"
-          type="password"
-          placeholder="Enter Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        <button type="submit" onClick={handleLogin} className="bg-amber-300 hover:bg-amber-600 active:bg-amber-100 text-black">Log in</button>
+      <div>
+        <form onSubmit={handleLogin} className="flex flex-col gap-8">
+          <h1>Log in</h1>
+          <input
+            className=" bg-black rounded-[5px] p-2"
+            type="email"
+            placeholder="Enter Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <input
+            className=" bg-black rounded-[5px] p-2"
+            type="password"
+            placeholder="Enter Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" className="bg-amber-300 hover:bg-amber-600 active:bg-amber-100 text-black">Log in</button>
+          <button type="submit" onClick={handleOnClick}>Sign up</button>
+
+        </form>
       </div>
-      <button type="submit">Sign up</button>
     </>
   );
 }
