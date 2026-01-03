@@ -3,11 +3,19 @@ import LoginPage from "../pages/LogInPage";
 import PublicRoute from "./PublicRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import TodoPage from "../pages/TodoPage";
-import SignUpPage from "../pages/SignupPage";
+import SignUpPage from "../pages/SignUpPage";
 
 function Router() {
     return (
         <Routes>
+            <Route
+                path="/"
+                element={
+                    <ProtectedRoute>
+                        <TodoPage />
+                    </ProtectedRoute>
+                }
+            />
             <Route
                 path="/login"
                 element={
