@@ -1,38 +1,55 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+  font-family: 'Outfit', system-ui, sans-serif;
+  color-scheme: dark;
+  background-color: #0b0f1a;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-}
-
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
 }
 
 
+.react-calendar {
+  background: transparent !important;
+  border: none !important;
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.react-calendar * {
+  color: rgba(255, 255, 255, 0.92) !important;
+}
+
+.react-calendar__tile {
+  background: transparent !important;
+  border-radius: 10px;
+}
+
+.react-calendar__tile:enabled:hover,
+.react-calendar__tile:enabled:focus {
+  background: rgba(99, 102, 241, 0.18) !important;
+}
+
+.react-calendar__tile--now {
+  background: rgba(255, 255, 255, 0.10) !important;
+}
+
+.react-calendar__tile--active {
+  background: rgba(99, 102, 241, 0.35) !important;
+}
+
+.react-calendar__month-view__days__day--neighboringMonth {
+  opacity: 0.35 !important;
+}
+
+.react-calendar__navigation button {
+  background: transparent !important;
+  border-radius: 10px !important;
+}
+
+.react-calendar__navigation button:enabled:hover,
+.react-calendar__navigation button:enabled:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+}

@@ -13,17 +13,32 @@ const CalendarComponent = () => {
   };
 
   return (
-    <div>
-      <label>Select deadline:</label>
-      <button onClick={handleShowCalendar} className="bg-emerald-300 text-black p-[8px 12px] cursor-pointer w-full h-[50px] rounded-sm"> {showCalendar ? "Close" : `${date.toLocaleDateString()}`} </button>
-      {showCalendar && (
-        <div className="position-relative z-50 top-full left-0 mt-2.5 drop-shadow-black">
-          <Calendar className="bg-gray-200 text-black rounded-sm" onChange={(newDate) => {
-            setDate(newDate)
-            setShowCalendar(false)
-          }} value={date} minDate={today} />
-        </div>
-      )}
+    <div className="flex flex-col gap-2 w-full">
+      <label className="text-sm font-medium text-purple-200 ml-1">Deadline</label>
+      <div className="relative">
+        <button
+          onClick={handleShowCalendar}
+          className="w-full p-3 bg-black/20 text-white rounded-xl border border-white/10 focus:border-purple-400/50 focus:ring-2 focus:ring-purple-500/20 focus:outline-none transition-all hover:bg-white/5 text-left flex items-center justify-between"
+        >
+          <span>{showCalendar ? "Close Calendar" : date.toLocaleDateString()}</span>
+          <span className="text-white/50">📅</span>
+        </button>
+
+        {showCalendar && (
+          <div className="absolute z-50 top-full left-0 mt-2 w-full p-2 bg-[#1a1a2e]/90 backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl animate-fade-in-down">
+            <Calendar
+              className="w-full bg-transparent border-none font-outfit text-white"
+              tileClassName="rounded-lg hover:bg-purple-600/30 transition-colors text-white"
+              onChange={(newDate) => {
+                setDate(newDate as Date)
+                setShowCalendar(false)
+              }}
+              value={date}
+              minDate={today}
+            />
+          </div>
+        )}
+      </div>
     </div>
   );
 };

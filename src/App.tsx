@@ -6,13 +6,15 @@ import LoginPage from './pages/LogInPage'
 import SignUpPage from './pages/SignUpPage'
 import Router from './routes/Routes'
 
+import TodoPage from './pages/TodoPage'
+import { Router } from 'react-router-dom'
+
 function App() {
 
-  const {isAuthenticated} = useAuth()
+  const { isAuthenticated } = useAuth()
 
   return (
-      /* isAuthenticated ? <ProtectedRoute /> : <PublicRoute /> */
-      <Router />
+    <Router />
   )
 }
 
