@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import CalendarComponent from "../components/Calendar";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 type Status = "Urgent" | "Serious" | "Get it done";
 type View = "today" | "upcoming" | "all";
@@ -16,26 +17,27 @@ type Task = {
 };
 
 const STATUSES: Status[] = ["Urgent", "Serious", "Get it done"];
+const DEFAULT_CATEGORIES = ["Personal", "Work", "School"];
 
 const TodoPage = () => {
+  const navigate = useNavigate()
+
+
+  const userId = localStorage.getItem("userId")
+
+  useEffect(() => {
+    if (!userId) navigate("/login");
+  }, [userId, navigate]);
+
   const [view, setView] = useState<View>("today");
-  const [categories, setCategories] = useState<string[]>(["Personal", "Work", "School"]);
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: 1,
-      title: "Fix calendar modal clipping",
-      notes: "Make modal scrollable so dates are clickable.",
-      category: "Work",
-      status: "Serious",
-      date: new Date(),
-      done: false,
-    },
-  ]);
+
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const [customCategories, setCustomCategories] = useState<string[]>([])
 
   const [createOpen, setCreateOpen] = useState(false);
   const [activeId, setActiveId] = useState<number | null>(null);
 
-  // create form
   const [tTitle, setTTitle] = useState("");
   const [tNotes, setTNotes] = useState("");
   const [tStatus, setTStatus] = useState<Status>("Get it done");
@@ -43,13 +45,35 @@ const TodoPage = () => {
   const [tDate, setTDate] = useState<Date>(new Date());
   const [newCat, setNewCat] = useState("");
 
-  const navigate = useNavigate()
-
   const handleLogout = () => {
-    localStorage.removeItem("token")
-
+    localStorage.removeItem("userId")
     navigate("/login")
   }
+
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const config = { headers: { "user-id": userId } }
+
+    axios.get("http://localhost:5000/api/tasks", config)
+      .then((res) => {
+
+        const loadedTasks = res.data.map((t: any) => ({
+          ...t,
+          date: new Date(t.date),
+          done: Boolean(t.done)
+        }));
+        setTasks(loadedTasks);
+      })
+      .catch((err) => {
+        console.error("Error fetching tasks", err);
+        if (err.response?.status === 401 || err.response?.status === 403) {
+          handleLogout();
+        }
+      });
+  }, [userId]);
+
 
 
   const todayKey = new Date().toDateString();
@@ -67,18 +91,30 @@ const TodoPage = () => {
 
   const active = useMemo(() => tasks.find((t) => t.id === activeId) ?? null, [tasks, activeId]);
 
-  const addCategory = () => {
-    const name = newCat.trim();
-    if (!name) return;
-    if (categories.some((c) => c.toLowerCase() === name.toLowerCase())) return;
-    setCategories((p) => [...p, name]);
-    setTCategory(name);
-    setNewCat("");
-  };
 
-  const addTask = () => {
+  const categories = useMemo(() => {
+    const taskCats = tasks.map(t => t.category)
+    return Array.from(new Set([...DEFAULT_CATEGORIES,  ...customCategories,...taskCats]))
+  }, [tasks, customCategories])
+
+
+      const addCategory = (e: React.MouseEvent) => {
+      e.preventDefault()
+      const name = newCat.trim();
+      if (!name) return;
+      setCustomCategories((prev) => [...prev, name])
+
+      setTCategory(name);
+      setNewCat("");
+    }
+
+
+    const actionHeader = { headers: { "user-id": userId } }
+
+  const addTask = async () => {
     if (!tTitle.trim()) return;
-    const task: Task = {
+
+    const newTaskPayload: Task = {
       id: Date.now(),
       title: tTitle.trim(),
       notes: tNotes.trim(),
@@ -87,22 +123,57 @@ const TodoPage = () => {
       date: tDate,
       done: false,
     };
-    setTasks((p) => [...p, task]);
-    setTTitle("");
-    setTNotes("");
-    setTStatus("Get it done");
-    setTCategory("Personal");
-    setTDate(new Date());
-    setCreateOpen(false);
+    
+    try {
+      const res = await axios.post("http://localhost:5000/api/tasks", newTaskPayload, actionHeader)
+
+      const task: Task = { ...newTaskPayload, id: res.data.id }
+      setTasks((p) => [...p, task]);
+
+      setTTitle("");
+      setTNotes("");
+      setTStatus("Get it done");
+      setTCategory("Personal");
+      setTDate(new Date());
+      setCreateOpen(false);
+    } catch (err) {
+      console.error("Error adding task", err)
+    }
   };
 
-  const updateTask = (id: number, patch: Partial<Task>) =>
-    setTasks((p) => p.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+  const updateTask = async (id: number, patch: Partial<Task>) => {
+    const oldTasks = [...tasks]
 
-  const removeTask = (id: number) => {
+
+    setTasks((p) => p.map((t) => (t.id === id ? { ...t, ...patch } : t)));
+    try {
+      await axios.put(`http://localhost:5000/api/tasks/${id}`, patch, actionHeader);
+    } catch (err) {
+      console.error("Error updating task", err);
+      setTasks(oldTasks);
+    }
+  }
+
+
+
+
+  const removeTask = async (id: number) => {
+    const oldTasks = [...tasks]
+
+
     setTasks((p) => p.filter((t) => t.id !== id));
     if (activeId === id) setActiveId(null);
+
+    try {
+      await axios.delete(`http://localhost:5000/api/tasks/${id}`, actionHeader)
+    } catch (err) {
+      console.error("Failed to delete", err)
+      setTasks(oldTasks)
+    }
   };
+
+
+
 
   const statusClass = (s: Status) =>
     s === "Urgent"
@@ -111,8 +182,13 @@ const TodoPage = () => {
         ? "bg-amber-500/15 text-amber-200 border-amber-400/20"
         : "bg-emerald-500/15 text-emerald-200 border-emerald-400/20";
 
+
+
+
+
+
   return (
-    
+
     <div className=" overflow-hidden bg-[#0B0F1A] text-white">
       <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-indigo-200 hover:bg-indigo-300 active:bg-indigo-400 text-xs font-bold text-gray-600">LOGOUT</button>
       <div className="h-full w-full flex overflow-hidden">
@@ -290,7 +366,7 @@ const TodoPage = () => {
                           ))}
                         </select>
                       </div>
-                      
+
                       <div className="rounded-xl border border-white/10 bg-white/5 p-3">
                         <p className="text-xs text-white/45 mb-2">Category</p>
                         <select

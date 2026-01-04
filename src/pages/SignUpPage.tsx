@@ -24,8 +24,8 @@ const SignUpPage = () => {
           password
         })
 
-        const { token } = response.data
-        localStorage.setItem("token", token)
+        const { userId } = response.data
+        localStorage.setItem("userId", userId)
 
         navigate("/todo")
       } catch (err: any) {
@@ -46,7 +46,7 @@ const SignUpPage = () => {
 
   return (
     <>
-      <div>
+      <div className="">
         <form onSubmit={handleSignup} className="flex flex-col gap-8 w-60">
 
 

@@ -1,7 +1,7 @@
 export const isAuthenticated = () => {
-    return !!localStorage.getItem("token")
+    return !!localStorage.getItem("userId")
 }
 
 export const logout = () => {
-    localStorage.removeItem("token")
+    localStorage.removeItem("userId")
 }

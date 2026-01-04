@@ -17,8 +17,8 @@ const LoginPage = () => {
         password
       })
 
-      const { token } = response.data
-      localStorage.setItem("token", token)
+      const { userId } = response.data
+      localStorage.setItem("userId", userId)
 
       navigate("/todo")
     } catch (error) {
@@ -52,7 +52,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
           />
           <button type="submit" className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-s font-medium text-black">Log in</button>
-          <button type="submit" onClick={handleOnClick}>Sign up</button>
+          <button type="button" onClick={handleOnClick}>Sign up</button>
 
         </form>
       </div>
