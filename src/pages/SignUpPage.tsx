@@ -46,11 +46,11 @@ const SignUpPage = () => {
 
   return (
     <>
-      <div className="">
-        <form onSubmit={handleSignup} className="flex flex-col gap-8 w-60">
+      <div className="flex flex-col items-center mt-60">
+        <form onSubmit={handleSignup} className="flex flex-col gap-8 bg-[#111827] p-10 w-100 h-120 pt-20 rounded-2xl">
 
 
-        <h1>Sign up</h1>
+        <h1 className="text-3xl">Sign up</h1>
         <input
           className=" bg-black rounded-[5px] p-2"
           type="email"
@@ -67,8 +67,8 @@ const SignUpPage = () => {
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Enter Password"
           />
-        <button type="submit" className="bg-green-500 hover:bg-green-600 p-2 rounded font-bold transition">Register</button>
-        <button className="bg-white hover:bg-gray-200 p-2 rounded font-bold transition text-black" onClick={handleOnClick}>Back to login</button>
+        <button type="submit" className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 text-s font-bold text-black transition">Register</button>
+        <button className="bg-white hover:bg-gray-200 p-2 rounded-lg font-bold transition text-black" onClick={handleOnClick}>Back to login</button>
 
           {error && <p className="text-red-500">{error}</p>}
         </form>
