@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from "react";
 import CalendarComponent from "../components/Calendar";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import TodoFlow from "../components/TodoFlow";
 
 type Status = "Urgent" | "Serious" | "Get it done";
-type View = "today" | "upcoming" | "all";
+type View = "tasks" | "upcoming" | "all";
 
 type Task = {
   id: number;
@@ -29,7 +30,7 @@ const TodoPage = () => {
     if (!userId) navigate("/login");
   }, [userId, navigate]);
 
-  const [view, setView] = useState<View>("today");
+  const [view, setView] = useState<View>("tasks");
 
   const [tasks, setTasks] = useState<Task[]>([]);
 
@@ -76,8 +77,8 @@ const TodoPage = () => {
 
 
 
-  const todayKey = new Date().toDateString();
-  const todayEnd = useMemo(() => {
+  const tasksKey = new Date().toDateString();
+  const tasksEnd = useMemo(() => {
     const d = new Date();
     d.setHours(23, 59, 59, 999);
     return d.getTime();
@@ -85,31 +86,31 @@ const TodoPage = () => {
 
   const filtered = useMemo(() => {
     if (view === "all") return tasks;
-    if (view === "today") return tasks.filter((t) => t.date.toDateString() === todayKey);
-    return tasks.filter((t) => t.date.getTime() > todayEnd);
-  }, [tasks, view, todayKey, todayEnd]);
+    if (view === "tasks") return tasks.filter((t) => t.date.toDateString() === tasksKey);
+    return tasks.filter((t) => t.date.getTime() > tasksEnd);
+  }, [tasks, view, tasksKey, tasksEnd]);
 
   const active = useMemo(() => tasks.find((t) => t.id === activeId) ?? null, [tasks, activeId]);
 
 
   const categories = useMemo(() => {
     const taskCats = tasks.map(t => t.category)
-    return Array.from(new Set([...DEFAULT_CATEGORIES,  ...customCategories,...taskCats]))
+    return Array.from(new Set([...DEFAULT_CATEGORIES, ...customCategories, ...taskCats]))
   }, [tasks, customCategories])
 
 
-      const addCategory = (e: React.MouseEvent) => {
-      e.preventDefault()
-      const name = newCat.trim();
-      if (!name) return;
-      setCustomCategories((prev) => [...prev, name])
+  const addCategory = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const name = newCat.trim();
+    if (!name) return;
+    setCustomCategories((prev) => [...prev, name])
 
-      setTCategory(name);
-      setNewCat("");
-    }
+    setTCategory(name);
+    setNewCat("");
+  }
 
 
-    const actionHeader = { headers: { "user-id": userId } }
+  const actionHeader = { headers: { "user-id": userId || "" } }
 
   const addTask = async () => {
     if (!tTitle.trim()) return;
@@ -123,7 +124,7 @@ const TodoPage = () => {
       date: tDate,
       done: false,
     };
-    
+
     try {
       const res = await axios.post("http://localhost:5000/api/tasks", newTaskPayload, actionHeader)
 
@@ -189,53 +190,25 @@ const TodoPage = () => {
 
   return (
 
-    <div className=" overflow-hidden bg-[#0B0F1A] text-white">
+    <div className="overflow-hidden bg-[#0B0F1A] text-white">
       <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-indigo-200 hover:bg-indigo-300 active:bg-indigo-400 text-xs font-bold text-gray-600">LOGOUT</button>
-      <div className="h-full w-full flex overflow-hidden">
-        {/* sidebar desktop */}
-        <aside className="hidden md:flex w-60 shrink-0 flex-col bg-[#0E1324] border-r border-white/10 p-4">
-          <div className="flex items-center justify-between mb-4">
-            <h1 className="text-sm font-semibold">TodoFlow</h1>
-            <button
-              onClick={() => setCreateOpen(true)}
-              className="px-2 py-1 rounded-md bg-white/5 hover:bg-white/10 text-xs"
-            >
-              + New
-            </button>
-          </div>
+        
+      <div className="h-full w-full flex items-center overflow-hidden">
 
-          <div className="space-y-1">
-            {(["today", "upcoming", "all"] as View[]).map((v) => (
-              <button
-                key={v}
-                onClick={() => {
-                  setView(v);
-                  setActiveId(null);
-                }}
-                className={`w-full text-left px-3 py-2 rounded-lg text-sm ${view === v ? "bg-indigo-500/15 text-indigo-200" : "text-white/70 hover:bg-white/5"
-                  }`}
-              >
-                {v === "all" ? "All" : v.charAt(0).toUpperCase() + v.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          <div className="mt-6">
-            <p className="text-[11px] uppercase text-white/35 mb-2">Categories</p>
-            <div className="space-y-1 max-h-[45vh] overflow-y-auto pr-1">
-              {categories.map((c) => (
-                <div key={c} className="px-3 py-2 rounded-lg text-xs text-white/60 bg-white/5">
-                  {c}
-                </div>
-              ))}
-            </div>
-          </div>
+        <aside className="max-[739px]:hidden w-60 shrink-0 bg-[#0E1324] border rounded-2xl border-white/10 p-4">
+          <TodoFlow
+            setCreateOpen={setCreateOpen}
+            setView={setView}
+            setActiveId={setActiveId}
+            view={view}
+            categories={categories}
+          />
         </aside>
 
-        {/* main */}
-        <main className="flex-1 overflow-hidden flex justify-center">
+        <div className="flex flex-col w-full">
+        <main className="flex-1 overflow-hidden justify-center">
           <div className="w-full flex  md:flex-row gap-3 p-3 md:p-4">
-            {/* list */}
+
             <section className="flex-1 min-h-0 flex flex-col rounded-2xl border border-white/10 bg-[#0E1324] overflow-hidden">
               <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
                 <div>
@@ -258,8 +231,8 @@ const TodoPage = () => {
                     key={t.id}
                     onClick={() => setActiveId(t.id)}
                     className={`rounded-2xl border p-3 cursor-pointer ${activeId === t.id
-                      ? "border-indigo-400/40 bg-indigo-500/10"
-                      : "border-white/10 bg-white/5 hover:bg-white/7"
+                      ? "border-indigo-400/40 bg-indigo-500/10 transition ease-in-out duration-150 h-50"
+                      : "border-white/10 bg-white/5 hover:bg-white/7 transition ease-in-out duration-150"
                       }`}
                   >
                     <div className="flex items-start gap-3">
@@ -276,7 +249,7 @@ const TodoPage = () => {
                       </button>
 
                       <div className="flex-1">
-                        <div className="flex items-start justify-between gap-2">
+                        <div className="flex items-start justify-between gap-2 ">
                           <p className={`text-sm font-semibold ${t.done ? "line-through text-white/35" : "text-white/90"}`}>
                             {t.title}
                           </p>
@@ -314,8 +287,8 @@ const TodoPage = () => {
               </div>
             </section>
 
-            {/* details desktop */}
-            <aside className="hidden md:flex w-[360px] min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0E1324] overflow-hidden">
+
+            <aside className="hidden md:flex w-90 min-h-0 flex-col rounded-2xl border border-white/10 bg-[#0E1324] overflow-hidden">
               <div className="px-4 py-3 border-b border-white/10 flex items-center justify-between">
                 <p className="text-sm font-semibold">{active ? "Task details" : "Schedule"}</p>
                 {active && (
@@ -403,8 +376,18 @@ const TodoPage = () => {
             </aside>
           </div>
         </main>
+        <aside className="min-[739px]:hidden shrink-0 bg-[#0E1324] border rounded-2xl border-white/10 p-4">
+          <TodoFlow
+            setCreateOpen={setCreateOpen}
+            setView={setView}
+            setActiveId={setActiveId}
+            view={view}
+            categories={categories}
+          />
+        </aside>        
 
-        {/* mobile FAB */}
+        </div>
+
         <button
           onClick={() => setCreateOpen(true)}
           className="md:hidden fixed bottom-6 right-6 w-14 h-14 rounded-full bg-indigo-500 hover:bg-indigo-400 text-2xl flex items-center justify-center shadow-xl"
@@ -412,7 +395,7 @@ const TodoPage = () => {
           +
         </button>
 
-        {/* CREATE MODAL/SHEET (FIXED HEIGHT + SCROLL so calendar is clickable) */}
+
         {createOpen && (
           <div
             className="fixed inset-0 z-50 bg-black/55 flex items-end md:items-center justify-center p-3"
