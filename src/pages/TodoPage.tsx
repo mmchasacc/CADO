@@ -191,11 +191,11 @@ const TodoPage = () => {
   return (
 
     <div className="overflow-hidden bg-[#0B0F1A] text-white">
-      <button onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-indigo-200 hover:bg-indigo-300 active:bg-indigo-400 text-xs font-bold text-gray-600">LOGOUT</button>
+      <button id="logoutBtn" onClick={handleLogout} className="px-3 py-1.5 rounded-lg bg-indigo-200 hover:bg-indigo-300 active:bg-indigo-400 text-xs font-bold text-gray-600">LOGOUT</button>
         
       <div className="h-full w-full flex items-center overflow-hidden">
 
-        <aside className="max-[739px]:hidden w-60 shrink-0 bg-[#0E1324] border rounded-2xl border-white/10 p-4">
+        <aside className="max-[739px]:hidden w-60 mt-45 shrink-0 bg-[#0E1324] border rounded-2xl border-white/10 p-4">
           <TodoFlow
             setCreateOpen={setCreateOpen}
             setView={setView}
@@ -206,7 +206,7 @@ const TodoPage = () => {
         </aside>
 
         <div className="flex flex-col w-full">
-        <main className="flex-1 overflow-hidden justify-center">
+        <main className="flex-1 overflow-hidden mt-10 justify-center">
           <div className="w-full flex  md:flex-row gap-3 p-3 md:p-4">
 
             <section className="flex-1 min-h-0 flex flex-col rounded-2xl border border-white/10 bg-[#0E1324] overflow-hidden">
@@ -218,6 +218,7 @@ const TodoPage = () => {
                   </p>
                 </div>
                 <button
+                id="addTaskBtn"
                   onClick={() => setCreateOpen(true)}
                   className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 text-xs font-medium"
                 >
@@ -412,6 +413,7 @@ const TodoPage = () => {
 
                 <div className="space-y-3">
                   <input
+                    id="titleInput"
                     value={tTitle}
                     onChange={(e) => setTTitle(e.target.value)}
                     placeholder="Title"
@@ -438,6 +440,7 @@ const TodoPage = () => {
                     </select>
 
                     <select
+                      id="selectCategory"
                       value={tCategory}
                       onChange={(e) => setTCategory(e.target.value)}
                       className="flex-1 px-3 py-2 rounded-lg bg-black/25 border border-white/10 text-sm"
@@ -475,6 +478,7 @@ const TodoPage = () => {
                       Cancel
                     </button>
                     <button
+                      id="createTask"
                       onClick={addTask}
                       className="flex-1 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-sm font-semibold"
                     >
