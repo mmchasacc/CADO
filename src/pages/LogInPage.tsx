@@ -51,8 +51,8 @@ const LoginPage = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit" className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 text-s font-bold text-black">Log in</button>
-          <button type="button" className="bg-white hover:bg-gray-200 p-2 rounded-lg font-bold transition text-black" onClick={handleOnClick}>Sign up</button>
+          <button type="submit" id="loginBtn" className="px-3 py-1.5 rounded-lg bg-indigo-500 hover:bg-indigo-400 active:bg-indigo-600 text-s font-bold text-black">Log in</button>
+          <button type="button" id="registerBtn" className="bg-white hover:bg-gray-200 p-2 rounded-lg font-bold transition text-black" onClick={handleOnClick}>Sign up</button>
 
         </form>
       </div>
